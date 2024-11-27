@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+
+<body>
+    <h1>Login</h1>
+    <form id="loginForm">
+        <label for="id">ID:</label>
+        <input type="text" id="id" name="id" placeholder="아이디" required>
+        <br>
+        <label for="password">PW:</label>
+        <input type="password" id="password" name="password" placeholder="비밀번호" required>
+        <button type="submit">Login</button><br />
+    </form>
+    <p>계정이 없으신가요? <a href="/register">회원가입</a></p>
+
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // 기본 폼 제출 방지
+
+            const id = document.getElementById('id').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id, password })
+                });
+
+                if (!response.ok) {
+                    console.error('Login response:', response);
+                    throw new Error('Login failed');
+                }
+
+                const data = await response.json();
+                localStorage.setItem('token', data.token); // 토큰을 로컬 스토리지에 저장
+
+                // /home 페이지로 이동
+                window.location.href = '/home';
+
+            } catch (error) {
+                alert('Login failed: ' + error.message);
+            }
+        });
+
+    </script>
+</body>
+
+</html>

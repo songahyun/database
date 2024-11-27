@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+</head>
+
+<body>
+    <h1>Register</h1>
+    <form id="registerForm">
+        <label for="id">ID:</label>
+        <input type="text" id="id" name="id" placeholder="아이디" required>
+        <br>
+        <label for="password">PW:</label>
+        <input type="password" id="password" name="password" placeholder="비밀번호" required>
+        <button type="submit">Register</button>
+    </form>
+    <p>이미 계정이 있으신가요? <a href="login.html">Login</a></p>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // 기본 폼 제출 방지
+
+            const id = document.getElementById('id').value;
+            const password = document.getElementById('password').value;
+
+            fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id, password })
+            })
+                .then(response => {
+                    console.log('Response:', response); // 응답 상태를 로그로 확인
+                    if (!response.ok) throw new Error('Registration failed');
+                    return response.json();
+                })
+                .then(data => {
+                    localStorage.setItem('token', data.token); // 발급받은 토큰을 로컬 스토리지에 저장
+                    window.location.href = '/home'; // 홈으로 리다이렉트
+                })
+                .catch(error => {
+                    alert('Registration failed: ' + error.message);
+                });
+        });
+    </script>
+</body>
+
+</html>
